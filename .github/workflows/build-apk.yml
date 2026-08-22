@@ -1,0 +1,43 @@
+name: Build MAX-APK.zip and Release
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-package:
+    name: Build Debug APK & Create MAX-APK.zip
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant Execute Permission for Gradlew
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Package MAX-debug.apk into MAX-APK.zip
+        run: |
+          mkdir -p /tmp/zip_stage
+          cp app/build/outputs/apk/debug/app-debug.apk /tmp/zip_stage/MAX-debug.apk
+          cd /tmp/zip_stage
+          zip -9 MAX-APK.zip MAX-debug.apk
+          mv MAX-APK.zip $GITHUB_WORKSPACE/MAX-APK.zip
+
+      - name: Upload MAX-APK.zip Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MAX-APK
+          path: MAX-APK.zip
+          if-no-files-found: error
