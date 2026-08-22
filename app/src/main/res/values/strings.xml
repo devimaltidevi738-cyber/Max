@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MAX</string>
+    <string name="accessibility_service_description">MAX Voice Assistant Accessibility Service enables voice navigation commands like Home, Back, Recents, Notifications, Quick Settings, Screen Lock, and Screen UI controls.</string>
+</resources>
